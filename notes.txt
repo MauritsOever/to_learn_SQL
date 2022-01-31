@@ -60,4 +60,121 @@ Limit 1; (an example)
 #### WEEK 2 ###############################################################################
 ###########################################################################################
 
+not equal to: <> liek yy but it makes some sene i guess
+WHERE statement but its ez
+can use WHERE column BETWEEN 15 AND 80; e.g.
+or WHERE column (NOT) IS NULL; 
 
+IN, OR, NOT
+
+WHERE column IN (1, 2, 3, 3435.8, 'steven')
+WHERE column = 'tofu' OR 'konbu' <- will not continue if first condition is met...
+
+WILDCARDS to be used w strings:
+% wildcards:
+%pizza grabs everything before pizza
+pizza% grabs anything after pizza
+%pizza% grabs anything before and after
+t % @gmail.com grabs anything beginning w t and ending w @gmail.com
+
+_ wildcards:
+WHERE size LIKE _pizza: (or WHERE size LIKE %pizza:)
+	output: mpizza, spizza
+
+ORDER BY:
+SELECT *
+FROM db
+ORDER BY productname, price
+ASC, DESC only apply to the direct column after e.g. ASC productname, DESC price
+basic math:
+SELECT UnitPrice - Discount AS DiscountedPrice
+
+AVERAGE, COUNT, MIN, MAX, SUM
+AVG(UnitPrice) -- nulls are ignored
+GROUP BY Region, City, Country
+HAVING count(*) >= 2; e.g.
+WHERE filters data before it is grouped, and HAVING groups data after its grouped
+
+
+###########################################################################################
+#### WEEK 3 ###############################################################################
+###########################################################################################
+
+### SUBQUERIES:
+
+SELECT customerid, region 
+FROM CustomerInfo 
+WHERE CustomerId in (SELECT CustomerId FROM OrderInfo WHERE Freight > 100);
+
+#### ALIASES:
+SELECT vendorname, productname, price FROM Vendors AS v, products AS p
+WHERE v.vendorId = p.VendorId
+
+
+### JOINS:
+
+Cross (Cartesian) join	- endproduct becomes MxN, and it doesnt match on anything
+Inner joins		- matching values in both tables, but only the matching observations, nothing else
+			  (FROM Suppliers INNER JOIN Orders ON Suppliers.supplierId = Orders.supplierId) or
+			  ((FROM suppliers INNER JOIN order ON Suppliers.supplierId = Orders.supplierId) INNER JOIN Products ON Suppliers.supplierId = products.supplierID)
+Self Joins 		- queried data is joined to itself
+			  SELECT a.customername AS customername1, b.customername AS customername2, a.city
+			  FROM customers a, customers b
+			  WHERE a.customerId = b.customerId AND a.city = b.city
+			  ORDER BY a.city (matches customers by city based on id and city keys)
+Left Joins		- take full index of left table, and stack on data from right
+Right Joins		- take full index of right table, and stack on data from left
+Full Outer Joins	- give me everything, and match rows where possible, syntax from last three is the same as inner joins
+union			- stack two tables on top of each other, so columns and data types need to be the same
+			  SELECT columnnames FROM table1
+			  UNION
+			  SELECT columnnames FROM table2
+
+###########################################################################################
+#### WEEK 4 ###############################################################################
+########################################################################################### 
+
+Cocatenate strings using ||
+
+e.g. SELECT FirstName || Lastname || '123', another column FROM Customers
+	
+TRIM function trims strings from spaces
+SELECT TRIM('   sheesh    ') --> 'sheesh'
+can also use LTRIM and RTRIM
+
+
+SUBSTR(column, index, amount of characters to be returned)
+so SUBSTR(Alexander, 2, 4) --> lexa
+
+UPPER, LOWER, UCASE --> returns changes to upper or lowercase, ucase is same as upper
+
+DATETIME FUNCTIONS:
+	- DATE returns date
+	- TIME returns time
+	- DATETIME returns both?
+	- JULIANDAY returns julianday format
+	- STRFTIME 
+	  SELECT STRFTIME('%Y', timecolumn) AS Year
+	  SELECT STRFTIME('%m', timecolumn) AS Month
+	  SELECT STRFTIME('%d', timecolumn) AS day
+General formate --> datetimefunc(datetimestring, modifier, ...)
+DATE('now') or STFRTIME('%Y %m %d', 'now')
+
+
+CASE 
+WHEN c1 THEN E1
+WHEN c2 THEN E2
+ELSE E3
+END
+
+SELECT CASE city WHEN 'LA' THEN 'LA' ELSE 'Other' END LA_OR_OTHER
+
+VIEWS (temporary tables pretty much)
+CREATE VIEW myview
+AS
+SELECT
+r.regiondesc
+t.territorydesc FROM Region r
+INNER JOIN Territories t on r.regionid = t.regionid
+
+then to see the view, you can do SELECT * FROM myview
